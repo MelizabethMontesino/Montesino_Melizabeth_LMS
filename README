@@ -1,0 +1,5 @@
+Book: Represents each book with attributes like title, author, barcode, and status Checking in or out. 
+
+Library: Manages the collection of books and provides operations like adding, removing, checking out, and checking in books
+
+LibraryApp: Main class that handles user input, loads books from a file, and performs operations like removing books, checking out, and checking in
