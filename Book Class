@@ -1,0 +1,41 @@
+// Create Book Class
+
+
+/**
+ * Book class to represent each book in the Library Management System.
+ * Author: [Your Name]
+ * Course: [Course Name]
+ * Date: [Date]
+ */
+public class Book {
+    private String title;
+    private String author;
+    private String barcode;
+    private boolean isCheckedOut;
+
+    // Constructor
+    public Book(String title, String author, String barcode) {
+        this.title = title;
+        this.author = author;
+        this.barcode = barcode;
+        this.isCheckedOut = false; // Book is initially checked in
+    }
+
+    // Getters
+    public String getTitle() { return title; }
+    public String getAuthor() { return author; }
+    public String getBarcode() { return barcode; }
+    public boolean isCheckedOut() { return isCheckedOut; }
+
+    // Check out the book
+    public void checkOut() { this.isCheckedOut = true; }
+
+    // Check in the book
+    public void checkIn() { this.isCheckedOut = false; }
+
+    // ToString method to display book details
+    public String toString() {
+        return title + " by " + author + " | Barcode: " + barcode + " | " + 
+               (isCheckedOut ? "Checked Out" : "Checked In");
+    }
+}
