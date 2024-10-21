@@ -1,0 +1,121 @@
+ Book Class file: 
+public class Book {
+ private String title;
+ private String barcode;
+ private String dueDate;
+ public Book(String title, String barcode) {
+ this.title = title;
+ this.barcode = barcode;
+ this.dueDate = null;
+ }
+ public String getTitle() {
+ return title;
+ }
+ public String getBarcode() {
+ return barcode;
+ }
+ public String getDueDate() {
+ return dueDate;
+ }
+ public void checkOut(String dueDate) {
+ this.dueDate = dueDate;
+ }
+ public void checkIn() {
+ this.dueDate = null;
+ }
+}
+Book Data Class: 
+import java.util.HashMap;
+import java.util.Map;
+public class BookDatabase {
+ private Map<String, Book> booksByBarcode;
+ private Map<String, Book> booksByTitle;
+ public BookDatabase() {
+ booksByBarcode = new HashMap<>();
+ booksByTitle = new HashMap<>();
+ }
+ public void addBook(Book book) {
+ booksByBarcode.put(book.getBarcode(), book);
+ booksByTitle.put(book.getTitle(), book);
+ }
+ public void removeBookByBarcode(String barcode) {
+ Book book = booksByBarcode.remove(barcode);
+ if (book != null) {
+ booksByTitle.remove(book.getTitle());
+ }
+ }
+ public void removeBookByTitle(String title) {
+ Book book = booksByTitle.remove(title);
+ if (book != null) {
+ booksByBarcode.remove(book.getBarcode());
+ }
+ }
+ public void checkOutBook(String barcode, String dueDate) {
+ Book book = booksByBarcode.get(barcode);
+ if (book != null) {
+ book.checkOut(dueDate);
+ }
+ }
+ public void checkInBook(String barcode) {
+ Book book = booksByBarcode.get(barcode);
+ if (book != null) {
+ book.checkIn();
+ }
+ }
+ public Book getBookByBarcode(String barcode) {
+ return booksByBarcode.get(barcode);
+ }
+ public Book getBookByTitle(String title) {
+ return booksByTitle.get(title);
+ }
+}
+Unit Case test
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+public class BookDatabaseTest {
+ private BookDatabase database;
+ @Before
+ public void setUp() {
+ database = new BookDatabase();
+ }
+ @Test
+ public void testAddBook() {
+ Book book = new Book("Test Book", "123456");
+ database.addBook(book);
+ assertNotNull(database.getBookByBarcode("123456"));
+ assertNotNull(database.getBookByTitle("Test Book"));
+ }
+ @Test
+ public void testRemoveBookByBarcode() {
+ Book book = new Book("Test Book", "123456");
+ database.addBook(book);
+ database.removeBookByBarcode("123456");
+ assertNull(database.getBookByBarcode("123456"));
+ assertNull(database.getBookByTitle("Test Book"));
+ }
+ @Test
+ public void testRemoveBookByTitle() {
+ Book book = new Book("Test Book", "123456");
+ database.addBook(book);
+ database.removeBookByTitle("Test Book");
+ assertNull(database.getBookByBarcode("123456"));
+ assertNull(database.getBookByTitle("Test Book"));
+ }
+ @Test
+ public void testCheckOutBook() {
+ Book book = new Book("Test Book", "123456");
+ database.addBook(book);
+ database.checkOutBook("123456", "2024-10-31");
+ assertEquals("2024-10-31", book.getDueDate());
+ }
+ @Test
+ public void testCheckInBook() {
+ Book book = new Book("Test Book", "123456");
+ database.addBook(book);
+ database.checkOutBook("123456", "2024-10-31");
+ database.checkInBook("123456");
+ assertNull(book.getDueDate());
+ }
+}
+ 
