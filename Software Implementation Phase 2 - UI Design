@@ -1,4 +1,4 @@
-java
+
 
 // File load section setup
 
@@ -34,7 +34,6 @@ loadFileButton.setOnAction(e -> {
 
 // Book Database
 
-java
 
 // Set up TableView for displaying books
 
