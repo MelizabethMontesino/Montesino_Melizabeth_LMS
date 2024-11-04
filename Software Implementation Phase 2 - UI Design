@@ -1,0 +1,149 @@
+java
+
+// File load section setup
+
+Label fileLabel = new Label("File Name:");
+
+TextField fileInput = new TextField();
+
+Button loadFileButton = new Button("Load File");
+
+// Load button event handler
+
+loadFileButton.setOnAction(e -> {
+
+    String fileName = fileInput.getText();
+
+    File file = new File(fileName);
+
+    if (!file.exists()) {
+
+        showAlert(Alert.AlertType.ERROR, "File Not Found", "The specified file does not exist.");
+
+    } else {
+
+        // Logic to load books into LMS database
+
+        loadBooksFromFile(file);
+
+        showAlert(Alert.AlertType.INFORMATION, "File Loaded", "Books successfully loaded into the database.");
+
+    }
+
+});
+
+// Book Database
+
+java
+
+// Set up TableView for displaying books
+
+TableView<Book> bookTable = new TableView<>();
+
+TableColumn<Book, String> titleColumn = new TableColumn<>("Title");
+
+TableColumn<Book, String> authorColumn = new TableColumn<>("Author");
+
+TableColumn<Book, String> barcodeColumn = new TableColumn<>("Barcode");
+
+TableColumn<Book, String> statusColumn = new TableColumn<>("Status");
+
+// Add columns to table and configure column properties
+
+bookTable.getColumns().addAll(titleColumn, authorColumn, barcodeColumn, statusColumn);
+
+// Logic to populate table with book data from the database
+
+refreshTable(bookTable);
+
+
+// Remove by Barcode section setup
+
+Label barcodeLabel = new Label(" Barcode to Remove:");
+
+TextField barcodeInput = new TextField();
+
+Button removeByBarcodeButton = new Button("Remove by Barcode");
+
+removeByBarcodeButton.setOnAction(e -> {
+
+    String barcode = barcodeInput.getText();
+
+    boolean removed = removeBookByBarcode(barcode);
+
+    if (removed) {
+
+        showAlert(Alert.AlertType.INFORMATION, "Book Removed", "Book with barcode " + barcode + " has been removed.");
+
+        refreshTable(bookTable);
+
+    } else {
+
+        showAlert(Alert.AlertType.ERROR, "Barcode Not Found", "No book with the specified barcode was found.");
+
+    }
+
+});
+
+
+//  Title section setup
+
+Label titleLabel = new Label(" Title to Remove:");
+
+TextField titleInput = new TextField();
+
+Button removeByTitleButton = new Button("Remove by Title");
+
+removeByTitleButton.setOnAction(e -> {
+
+    String title = titleInput.getText();
+
+    boolean removed = removeBookByTitle(title);
+
+    if (removed) {
+
+        showAlert(Alert.AlertType.INFORMATION, "Book Removed", "Book with title '" + title + "' has been removed.");
+
+        refreshTable(bookTable);
+
+    } else {
+
+        showAlert(Alert.AlertType.ERROR, "Title Not Found", "No book with the specified title was found.");
+
+    }
+
+});
+
+
+//  section setup
+
+Label checkOutLabel = new Label("Title to Check Out:");
+
+TextField checkOutInput = new TextField();
+
+Button checkOutButton = new Button("Check Out");
+
+checkOutButton.setOnAction(e -> {
+
+    String title = checkOutInput.getText();
+
+    boolean checkedOut = checkOutBook(title);
+
+    if (checkedOut) {
+
+        showAlert(Alert.AlertType.INFORMATION, "Book Checked Out", "Book '" + title + "' has been checked out.");
+
+    } else {
+
+        showAlert(Alert.AlertType.ERROR, "Book Unavailable", "The book is already checked out or not available.");
+
+    }
+
+});
+
+// implementation of Exit Button
+
+Button exitButton = new Button("Exit");
+
+exitButton.setOnAction(e -> Platform.exit());
+
