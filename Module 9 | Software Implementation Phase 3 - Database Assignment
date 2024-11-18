@@ -1,0 +1,104 @@
+// Database Creation
+CREATE TABLE books (
+    barcode TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    author TEXT NOT NULL,
+    genre TEXT NOT NULL,
+    status TEXT NOT NULL CHECK(status IN ('checked in', 'checked out')),
+    due_date DATE
+);
+
+-- Insert sample data
+INSERT INTO books (barcode, title, author, genre, status, due_date) VALUES
+('001', 'Book 1', 'Author A', 'Fiction', 'checked in', NULL),
+('002', 'Book 2', 'Author B', 'Non-Fiction', 'checked out', '2024-12-01'),
+('003', 'Book 3', 'Author C', 'Fiction', 'checked in', NULL);
+-- Add more records to populate the database.
+//Java Application Setup
+import java.sql.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+// GUI Design
+JFrame frame = new JFrame("Library Management System");
+JTable table = new JTable(); // To display book data
+JButton removeButton = new JButton("Remove Book");
+JButton checkOutButton = new JButton("Check Out");
+JButton checkInButton = new JButton("Check In");
+
+// Add components to the frame
+frame.add(new JScrollPane(table));
+frame.add(removeButton);
+frame.add(checkOutButton);
+frame.add(checkInButton);
+frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+frame.setSize(800, 600);
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setVisible(true);
+// Database Connection
+
+Connection connect() {
+    try {
+        return DriverManager.getConnection("jdbc:sqlite:books.db");
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return null;
+    }
+}
+
+//Display Data
+void loadData(JTable table) {
+    try (Connection conn = connect();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery("SELECT * FROM books")) {
+
+        // Use ResultSet to populate table
+        table.setModel(DbUtils.resultSetToTableModel(rs)); // Requires DbUtils library
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+//Remove a Book
+
+removeButton.addActionListener(e -> {
+    String barcode = JOptionPane.showInputDialog("Enter Barcode to Remove:");
+    try (Connection conn = connect();
+         PreparedStatement pstmt = conn.prepareStatement("DELETE FROM books WHERE barcode = ?")) {
+        pstmt.setString(1, barcode);
+        pstmt.executeUpdate();
+        loadData(table); // Refresh table
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+});
+
+//Check Out a Book
+
+checkOutButton.addActionListener(e -> {
+    String barcode = JOptionPane.showInputDialog("Enter Barcode to Check Out:");
+    try (Connection conn = connect();
+         PreparedStatement pstmt = conn.prepareStatement(
+             "UPDATE books SET status = 'checked out', due_date = DATE('now', '+14 days') WHERE barcode = ?")) {
+        pstmt.setString(1, barcode);
+        pstmt.executeUpdate();
+        loadData(table); // Refresh table
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+});
+
+//Check In a Book
+
+checkInButton.addActionListener(e -> {
+    String barcode = JOptionPane.showInputDialog("Enter Barcode to Check In:");
+    try (Connection conn = connect();
+         PreparedStatement pstmt = conn.prepareStatement(
+             "UPDATE books SET status = 'checked in', due_date = NULL WHERE barcode = ?")) {
+        pstmt.setString(1, barcode);
+        pstmt.executeUpdate();
+        loadData(table); // Refresh table
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+});
