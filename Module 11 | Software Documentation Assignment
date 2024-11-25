@@ -1,0 +1,214 @@
+/**
+ * Represents a book in a library management system.
+ * Each book has a unique ID, a title, an author, and 
+ * information about its availability and current borrower.
+ */
+public class Book {
+
+    private String bookId; // Unique identifier for the book
+    private String title; // Title of the book
+    private String author; // Author of the book
+    private boolean availability; // True if the book is available, false if borrowed
+    private String borrower; // Name of the borrower (if any)
+
+    /**
+     * Default constructor initializing an empty book record.
+     */
+    public Book() {
+        this.bookId = "";
+        this.title = "";
+        this.author = "";
+        this.availability = true;
+        this.borrower = "";
+    }
+
+    /**
+     * Parameterized constructor to create a book with specified details.
+     *
+     * @param bookId       the unique ID of the book
+     * @param title        the title of the book
+     * @param author       the author of the book
+     * @param availability the availability status of the book
+     */
+    public Book(String bookId, String title, String author, boolean availability) {
+        setBookId(bookId);
+        setTitle(title);
+        setAuthor(author);
+        this.availability = availability;
+        this.borrower = "";
+    }
+
+    // Getter and Setter for bookId
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        if (bookId == null || bookId.isEmpty()) {
+            throw new IllegalArgumentException("Book ID cannot be null or empty");
+        }
+        this.bookId = bookId;
+    }
+
+    // Getter and Setter for title
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be null or empty");
+        }
+        this.title = title;
+    }
+
+    // Getter and Setter for author
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        if (author == null || author.isEmpty()) {
+            throw new IllegalArgumentException("Author cannot be null or empty");
+        }
+        this.author = author;
+    }
+
+    // Getter and Setter for availability
+    public boolean isAvailable() {
+        return availability;
+    }
+
+    public void setAvailability(boolean availability) {
+        this.availability = availability;
+    }
+
+    // Getter and Setter for borrower
+    public String getBorrower() {
+        return borrower;
+    }
+
+    public void setBorrower(String borrower) {
+        this.borrower = borrower;
+    }
+
+    /**
+     * Returns a string representation of the book's details.
+     *
+     * @return the book's details in string format
+     */
+    @Override
+    public String toString() {
+        return "Book ID: " + bookId + ", Title: " + title + ", Author: " + author +
+                ", Available: " + availability + ", Borrower: " + borrower;
+    }
+}
+
+
+//libarymanagementsystem class
+
+/**
+ * Manages a collection of books in a library.
+ * Provides functionalities to add, search, borrow, return, and display books.
+ */
+public class LibraryManagementSystem {
+
+    private Book[] books; // Array to store books
+    private int bookCount; // Number of books currently in the library
+
+    /**
+     * Initializes the library management system with a given capacity.
+     *
+     * @param capacity the maximum number of books the library can hold
+     */
+    public LibraryManagementSystem(int capacity) {
+        books = new Book[capacity];
+        bookCount = 0;
+    }
+
+    /**
+     * Adds a new book to the library.
+     *
+     * @param bookId       the unique ID of the book
+     * @param title        the title of the book
+     * @param author       the author of the book
+     * @param availability the availability status of the book
+     */
+    public void addBook(String bookId, String title, String author, boolean availability) {
+        for (int i = 0; i < bookCount; i++) {
+            if (books[i].getBookId().equals(bookId)) {
+                System.out.println("Book ID already exists.");
+                return;
+            }
+        }
+        books[bookCount++] = new Book(bookId, title, author, availability);
+        System.out.println("Book added successfully.");
+    }
+
+    /**
+     * Displays details of all books in the library.
+     */
+    public void displayAllBooks() {
+        for (int i = 0; i < bookCount; i++) {
+            System.out.println(books[i]);
+        }
+    }
+
+    /**
+     * Searches for a book by its ID.
+     *
+     * @param bookId the ID of the book to search for
+     */
+    public void searchBook(String bookId) {
+        for (int i = 0; i < bookCount; i++) {
+            if (books[i].getBookId().equals(bookId)) {
+                System.out.println(books[i]);
+                return;
+            }
+        }
+        System.out.println("Book not found.");
+    }
+
+    /**
+     * Borrows a book if it is available.
+     *
+     * @param bookId   the ID of the book to borrow
+     * @param borrower the name of the person borrowing the book
+     */
+    public void borrowBook(String bookId, String borrower) {
+        for (int i = 0; i < bookCount; i++) {
+            if (books[i].getBookId().equals(bookId)) {
+                if (books[i].isAvailable()) {
+                    books[i].setAvailability(false);
+                    books[i].setBorrower(borrower);
+                    System.out.println("Book borrowed successfully.");
+                } else {
+                    System.out.println("Book is currently unavailable.");
+                }
+                return;
+            }
+        }
+        System.out.println("Book not found.");
+    }
+
+    /**
+     * Returns a borrowed book back to the library.
+     *
+     * @param bookId the ID of the book to return
+     */
+    public void returnBook(String bookId) {
+        for (int i = 0; i < bookCount; i++) {
+            if (books[i].getBookId().equals(bookId)) {
+                if (!books[i].isAvailable()) {
+                    books[i].setAvailability(true);
+                    books[i].setBorrower("");
+                    System.out.println("Book returned successfully.");
+                } else {
+                    System.out.println("Book was not borrowed.");
+                }
+                return;
+            }
+        }
+        System.out.println("Book not found.");
+    }
+}
